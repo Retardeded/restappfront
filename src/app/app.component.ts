@@ -1,33 +1,57 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { NumService } from './num.service';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+interface CurrencyRequest {
+  currency: string;
+  name: string;
+}
+
+interface CurrencyRequestLog {
+  id: number;
+  currencyCode: string;
+  personName: string;
+  date: string; // You can use string or Date type here based on your preference
+  currencyExchangeRate: number;
+}
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
+
 export class AppComponent {
-  title = 'restapp-front';
+  currencyCode: string = '';
+  userName: string = '';
+  currencyValue: number | undefined; // Initialize as 'undefined'
+  requests: CurrencyRequestLog[] = [];
 
-  public nums: number[] = [];
+  constructor(private http: HttpClient) {}
 
-  constructor(private numService: NumService){
+  getCurrencyValue() {
+    const body: CurrencyRequest = {
+      currency: this.currencyCode,
+      name: this.userName,
+    };
+
+    this.http
+      .post<number>(
+        'http://localhost:8080/currencies/get-current-currency-value-command',
+        body
+      )
+      .subscribe((response) => {
+        this.currencyValue = response; 
+        this.getAllCurrencyRequests();
+      });
   }
 
-  public getNums(nums:string, sortOrder:boolean): void {
-
-    var numbers = nums.split(',').map(function(item) {
-      return parseInt(item, 10);
-  });
-
-    var numbersSortData = {
-      numbers: numbers,
-      order: sortOrder ? "ASC" : "DESC"
-    }
-
-    this.numService.getNums(numbersSortData).subscribe((response:any) => {
-      this.nums = response;
-    });
+  getAllCurrencyRequests() {
+    this.http
+      .get<CurrencyRequestLog[]>(
+        'http://localhost:8080/currencies/requests'
+      )
+      .subscribe((response) => {
+        this.requests = response;
+      });
   }
 }

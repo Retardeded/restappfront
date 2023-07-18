@@ -1,22 +1,33 @@
 
-<p>Ascending order?
-  <input type="checkbox" #boxOrder>
+<h2>Enter Currency Code and User Name</h2>
+
+<p>
+  Currency Code:
+  <input type="text" [(ngModel)]="currencyCode" name="currencyCode" />
 </p>
-<input type="string" name="numbers" #boxNums>
 
-<div>
-  <a
-  (click) = "getNums(boxNums.value, boxOrder.checked)"
-  href="javascript:void(0)"
-  role="button">
-  Sort Numbers
-</a>
+<p>
+  User Name:
+  <input type="text" [(ngModel)]="userName" name="userName" />
+</p>
 
+<button (click)="getCurrencyValue()">Get Currency Value</button>
+
+
+<div *ngIf="currencyValue !== null">
+  <h2>Result</h2>
+  <p>Currency Code: {{ currencyCode }}</p>
+  <p>User Name: {{ userName }}</p>
+  <p>Value: {{ currencyValue }}</p>
 </div>
 
-<div>
-  Sorted numbers:
-  {{nums}}
-</div>
-
+<h2>Saved Requests</h2>
+<ul>
+  <li *ngFor="let request of requests">
+    <p>Currency Code: {{ request.currencyCode }}</p>
+    <p>User Name: {{ request.personName }}</p>
+    <p>Date: {{ request.date }}</p>
+    <p>Value: {{ request.currencyExchangeRate }}</p>
+  </li>
+</ul>
 
